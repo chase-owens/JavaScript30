@@ -1,20 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Video Speed Scrubber</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <div class="wrapper">
-    <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" loop controls></video>
-    <div class="speed">
-      <div class="speed-bar">1×</div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Speed Scrubber</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <video
+        class="flex"
+        width="765"
+        height="430"
+        src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4"
+        loop
+        controls
+      ></video>
+      <div class="speed">
+        <div class="speed-bar">1×</div>
+      </div>
     </div>
-  </div>
 
-<script>
-</script>
-</body>
+    <script>
+      const speed = document.querySelector('.speed');
+      const bar = document.querySelector('.speed-bar');
+      const video = document.querySelector('video');
+
+      function updateSpeed(event) {
+        if (!video.paused) {
+          const { bottom, top } = speed.getBoundingClientRect();
+          const spaceAvailable = bottom - top;
+          const currentY = event.y - top;
+          const spaceFilled = currentY / spaceAvailable;
+
+          const minRate = 0.4;
+          const playbackRate = Math.max(minRate, spaceFilled * 4);
+
+          bar.textContent = `${playbackRate.toFixed(2)} x`;
+          bar.style.height = `${spaceFilled * 100}%`;
+          video.playbackRate = playbackRate;
+        }
+      }
+
+      speed.addEventListener('mousemove', updateSpeed);
+    </script>
+  </body>
 </html>

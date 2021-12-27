@@ -1,22 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+    <script>
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+      let cities = [];
 
-</script>
-</body>
+      const data = fetch(endpoint)
+        .then((blob) => blob.json())
+        .then((data) => cities.push(...data))
+        .catch((err) => console.log(err));
+
+      const hasCityAndState = ({ city, state }, query) => {
+        const pattern1 = `(${query})`;
+        const regex = new RegExp(pattern1, "gi");
+        return regex.test(city) || regex.test(state);
+      };
+
+      function updateCities(event) {
+        displayCities(getMatches(event.target.value), event.target.value);
+      }
+
+      function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      const getMatches = (query) =>
+        cities.filter((city) => hasCityAndState(city, query));
+
+      function displayCities(matches, query) {
+        if (!query) {
+          suggestionsEl.innerHTML = ` <li>Filter for a city</li>
+        <li>or a state</li>`;
+          return;
+        }
+
+        const cityListItems = matches
+          .map((place) => {
+            const regex = new RegExp(query, "gi");
+            const cityName = place.city.replace(
+              regex,
+              `<span class="hl">${query}</span>`
+            );
+            const stateName = place.state.replace(
+              regex,
+              `<span class="hl">${query}</span>`
+            );
+            return `
+      <li>
+        <span class="name">${cityName}, ${stateName}</span>
+        <span class="population">${numberWithCommas(place.population)}</span>
+      </li>
+    `;
+          })
+          .join("");
+
+        suggestionsEl.innerHTML = cityListItems;
+      }
+
+      const suggestionsEl = document.querySelector(".suggestions");
+      const searchInput = document.querySelector(".search");
+      searchInput.addEventListener("keyup", updateCities);
+      searchInput.addEventListener("change", updateCities);
+
+      console.log({ cities, suggestionsEl });
+    </script>
+  </body>
 </html>

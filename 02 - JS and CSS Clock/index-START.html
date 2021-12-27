@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>JS + CSS Clock</title>
-</head>
-<body>
-
-
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS + CSS Clock</title>
+  </head>
+  <body>
     <div class="clock">
       <div class="clock-face">
         <div class="hand hour-hand"></div>
@@ -15,60 +13,94 @@
       </div>
     </div>
 
+    <style>
+      html {
+        background: #018ded url(https://unsplash.it/1500/1000?image=881&blur=5);
+        background-size: cover;
+        font-family: "helvetica neue";
+        text-align: center;
+        font-size: 10px;
+      }
 
-  <style>
-    html {
-      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
-      background-size: cover;
-      font-family: 'helvetica neue';
-      text-align: center;
-      font-size: 10px;
-    }
+      body {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        flex: 1;
+        min-height: 100vh;
+        align-items: center;
+      }
 
-    body {
-      margin: 0;
-      font-size: 2rem;
-      display: flex;
-      flex: 1;
-      min-height: 100vh;
-      align-items: center;
-    }
+      .clock {
+        width: 30rem;
+        height: 30rem;
+        border: 20px solid white;
+        border-radius: 50%;
+        margin: 50px auto;
+        position: relative;
+        padding: 2rem;
+        box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0 0 3px #efefef,
+          inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
+      }
 
-    .clock {
-      width: 30rem;
-      height: 30rem;
-      border: 20px solid white;
-      border-radius: 50%;
-      margin: 50px auto;
-      position: relative;
-      padding: 2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
-    }
+      .clock-face::before {
+        content: "";
+        position: relative;
+        display: block;
+        width: 1.2rem;
+        height: 1.2rem;
+        border: 2px solid white;
+        border-radius: 50%;
+        top: calc(50% - 5.5px);
+        left: calc(50% - 7.75px);
+        background: rgba(0, 55, 93, 0.8);
+        z-index: 2;
+      }
 
-    .clock-face {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
-    }
+      .clock-face {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: translateY(
+          -3px
+        ); /* account for the height of the clock hands */
+      }
 
-    .hand {
-      width: 50%;
-      height: 6px;
-      background: black;
-      position: absolute;
-      top: 50%;
-    }
+      .hand {
+        width: 50%;
+        height: 6px;
+        background: black;
+        position: absolute;
+        top: 50%;
+        transform-origin: 100%;
+        transition: transform 0.08s cubic-bezier(0.36, 0.38, 0.66, 2);
+      }
+    </style>
 
-  </style>
+    <script>
+      const hourHand = document.querySelector(".hour-hand");
+      const minuteHand = document.querySelector(".min-hand");
+      const secondHand = document.querySelector(".second-hand");
 
-  <script>
+      function setTime() {
+        const date = new Date();
 
+        const hour = date.getHours();
+        const hourDegrees = (hour / 12) * 360 + 90;
+        hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 
-  </script>
-</body>
+        const minutes = date.getMinutes();
+        const minutesDegrees = (minutes / 60) * 360 + 90;
+        minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+
+        const seconds = date.getSeconds();
+        const secondsDegrees = (seconds / 60) * 360 + 90;
+        secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      }
+
+      setInterval(setTime, 1000);
+
+      setDate();
+    </script>
+  </body>
 </html>
